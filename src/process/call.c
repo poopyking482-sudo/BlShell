@@ -12,6 +12,9 @@ void shell_call(char *tokens[], int token_count) {
     else if (strcmp(tokens[0], "kill") == 0) {
         shell_kill(tokens[1]);
     } 
+    else if (strcmp(tokens[0], "term") == 0) {
+        shell_term(tokens[1]);
+    }
     else if (strcmp(tokens[0], "exit") == 0) {
         exit(0);
     } 
