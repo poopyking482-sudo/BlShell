@@ -19,4 +19,4 @@ int main(int argc, char *argv[]) {
     printf("[bldir] successfully created: %s\n", argv[1]);
     return 0;
 }
-// use /bin/blshell
+// ! usr/bin/blshell/bldir/bldir/bldir.c
