@@ -3,6 +3,7 @@
 
 void shell_fork(void);
 void shell_kill(const char *pid_str);
+void shell_term(const char *pid_str);
 void shell_call(char *tokens[], int token_count);
 
 #endif
