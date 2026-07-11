@@ -14,7 +14,7 @@ void yourPrintCode(const char* argument) {
 int main(int argc, char* argv[]) {
     // 1. Check if an argument exists
     if (argc < 2) {
-        printf("error: blcall cannot call!\n");
+        printf("error: bltalk cannot call!\n");
         return 0; // just stops the program here and drops back to the shell
     }
 
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
         
     } else {
         // if syntax is wrong
-        printf("error: blcall cannot call!\n");
+        printf("error: bltalk cannot call!\n");
     }
     
     // naturally drops out of the application and returns control to the shell
