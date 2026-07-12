@@ -1,7 +1,7 @@
 #ifndef BL_AUTH_H
 #define BL_AUTH_H
 
-#define MAX_USERS 100000
+#define MAX_USERS 50
 #define MAX_LEN 50
 
 typedef struct {
