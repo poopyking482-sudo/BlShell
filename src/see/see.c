@@ -1,46 +1,86 @@
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+#include <stdbool.h>
 
-void stream_file(FILE *file, int number_lines) {
+// Format and output the file stream to the terminal
+void stream_file(FILE *file, bool number_lines, bool show_ends, bool show_tabs) {
     char line[1024];
     int line_count = 1;
 
-    // Read line by line until End-Of-File
     while (fgets(line, sizeof(line), file) != NULL) {
+        // 1. Print line numbers if requested (-n)
         if (number_lines) {
-            printf("%6d  %s", line_count++, line);
-        } else {
-            printf("%s", line);
+            printf("%6d  ", line_count++);
+        }
+
+        // 2. Step through each character to handle special formatting flags
+        for (int i = 0; line[i] != '\0'; i++) {
+            // Handle trailing newline character for end-of-line marking (-E)
+            if (line[i] == '\n') {
+                if (show_ends) {
+                    putchar('$'); // Mark the literal end of the string block
+                }
+                putchar('\n');
+            } 
+            // Convert raw tab characters to visible symbols (-T)
+            else if (line[i] == '\t' && show_tabs) {
+                printf("^I");
+            } 
+            // Pass standard characters straight through
+            else {
+                putchar(line[i]);
+            }
         }
     }
 }
 
 int main(int argc, char *argv[]) {
-    int number_lines = 0;
+    bool number_lines = false;
+    bool show_ends = false;
+    bool show_tabs = false;
     int file_index = 1;
 
-    // Check for the line numbering option
-    if (argc > 1 && strcmp(argv[1], "-n") == 0) {
-        number_lines = 1;
-        file_index = 2;
+    // Parse command line flags sequentially
+    while (file_index < argc && argv[file_index][0] == '-') {
+        char *flag = argv[file_index];
+        
+        // Loop through flag characters to allow combined flags (e.g., -nE)
+        for (int j = 1; flag[j] != '\0'; j++) {
+            if (flag[j] == 'n') {
+                number_lines = true;
+            } else if (flag[j] == 'E') {
+                show_ends = true;
+            } else if (flag[j] == 'T') {
+                show_tabs = true;
+            } else {
+                fprintf(stderr, "see: unknown option '-%c'\n", flag[j]);
+                fprintf(stderr, "Usage: see [-nET] [file...]\n");
+                return 1;
+            }
+        }
+        file_index++;
     }
 
-    // Default to standard input if no files are passed
+    // Default to stdin if no target files are specified
     if (file_index >= argc) {
-        stream_file(stdin, number_lines);
+        stream_file(stdin, number_lines, show_ends, show_tabs);
         return 0;
     }
 
-    // Loop through and print every file passed
+    // Process every file passed into the argument list
+    int exit_status = 0;
     for (int i = file_index; i < argc; i++) {
         FILE *file = fopen(argv[i], "r");
         if (file == NULL) {
-            fprintf(stderr, "see: cannot open '%s'\n", argv[i]);
+            fprintf(stderr, "see: cannot open '%s': %s\n", argv[i], strerror(errno));
+            exit_status = 1; // Track failure but keep processing remaining files
             continue;
         }
-        stream_file(file, number_lines);
+        
+        stream_file(file, number_lines, show_ends, show_tabs);
         fclose(file);
     }
 
-    return 0;
+    return exit_status;
 }
