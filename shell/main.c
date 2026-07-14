@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include "rusttypes.h"
+#include "colors.h"
 
 #define MAX_LINE 1024
 #define MAX_ARGS 64
@@ -11,6 +12,16 @@
 int main(void) {
     char line[MAX_LINE];
     char *args[MAX_ARGS];
+
+    // 1. Instantly clear the screen and home the cursor on boot
+    printf(ANSI_CLEAR_SCREEN ANSI_CURSOR_HOME);
+
+    // 2. Print your raw _XCORP_ signature block
+    printf(ANSI_WHITE ANSI_BOLD "blsh v1.1 " ANSI_CYAN "_XCORP_" ANSI_RESET "\n");
+
+    // 3. Print your Arch-style system matrix block right underneath
+    PRINT_COLOR_MATRIX();
+    printf("\n"); // Generates a clean space block before the prompt loop begins
 
     while (1) {
         printf("blsh> ");
