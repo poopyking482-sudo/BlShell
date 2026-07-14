@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "rusttypes.h"
 
 #define MAX_LINE 1024
 #define MAX_ARGS 64
@@ -40,9 +41,9 @@ int main(void) {
                 // FALLBACK: Try executing from the current local directory
                 char local_path[MAX_LINE];
                 snprintf(local_path, sizeof(local_path), "./%s", args[0]);
-                
+
                 execvp(local_path, args); 
-                
+
                 // If both standard PATH and local folder checks fail
                 fprintf(stderr, "blsh: %s: command not found\n", args[0]);
             }
